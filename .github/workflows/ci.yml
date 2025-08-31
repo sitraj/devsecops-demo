@@ -17,10 +17,13 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
+          run: echo "$GITHUB_ACTOR"
+          run: echo "$username"
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker image
         uses: docker/build-push-action@v4
         with:
           push: true
+          run: echo "$GITHUB_REPOSITORY_OWNER"
           tags: ghcr.io/${{ github.repository_owner }}/devsecops-demo:latest
