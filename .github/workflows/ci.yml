@@ -31,7 +31,7 @@ jobs:
         run: semgrep --config auto --json > semgrep-report.json
 
       - name: Upload Semgrep report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.6.2
         with:
             name: semgrep-report
             path: semgrep-report.json
