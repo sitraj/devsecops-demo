@@ -1,0 +1,26 @@
+apiVersion: apps/v1       # Version of the API
+kind: Deployment          # This is a Deployment object
+metadata:
+  name: devsecops-demo    # Name of the Deployment
+  labels:
+    app: devsecops-demo   # Labels help group related objects
+
+spec:
+  replicas: 2             # Run 2 pods (copies of the app)
+  selector:
+    matchLabels:
+      app: devsecops-demo # Match pods with this label
+  template:
+    metadata:
+      labels:
+        app: devsecops-demo  # Pods created will carry this label
+    spec:
+      containers:
+        - name: devsecops-demo
+          # image: devsecops-demo:local   # Docker image
+          # imagePullPolicy: IfNotPresent # Don’t always pull, use local if available
+          # 👇 GHCR image, replace <OWNER> with your GitHub username or org
+          image: ghcr.io/<OWNER>/devsecops-demo:latest
+          imagePullPolicy: Always   # Always pull the latest version from GHCR
+          ports:
+            - containerPort: 3000       # Inside container app listens on 3000
