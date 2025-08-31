@@ -1,7 +1,7 @@
 FROM node:18-alpine
 WORKDIR /app
 COPY app/package*.json ./
-RUN npm ci --only=production
+RUN npm ic --only=production
 COPY app/ .
 EXPOSE 3000
 CMD ["node", "index.js"]
