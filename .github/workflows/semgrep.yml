@@ -1,28 +1,26 @@
-name: Semgrep Scan
+name: Semgrep SAST Scan
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
+  push:
+    branches: [ "main" ]
 
 jobs:
   semgrep:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Run Semgrep
+        uses: returntocorp/semgrep-action@v1
         with:
-          python-version: 3.11  # Semgrep requires Python 3.7+
+          config: >-
+            p/default        # Use Semgrep's default security rules
+            .semgrep/
+          generateSarif: "1" # Generate SARIF for GitHub code scanning
 
-      - name: Install Semgrep
-        run: pip install semgrep
-
-      - name: Run Semgrep scan
-        run: semgrep --config auto
+      - name: Upload SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif

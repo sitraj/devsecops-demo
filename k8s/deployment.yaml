@@ -15,12 +15,14 @@ spec:
       labels:
         app: devsecops-demo  # Pods created will carry this label
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: devsecops-demo
           # image: devsecops-demo:local   # Docker image
           # imagePullPolicy: IfNotPresent # Don’t always pull, use local if available
           # 👇 GHCR image, replace <OWNER> with your GitHub username or org
-          image: ghcr.io/<OWNER>/devsecops-demo:latest
+          image: ghcr.io/sitraj/devsecops-demo:latest
           imagePullPolicy: Always   # Always pull the latest version from GHCR
           ports:
             - containerPort: 3000       # Inside container app listens on 3000
