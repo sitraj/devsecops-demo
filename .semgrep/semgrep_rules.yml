@@ -1,0 +1,31 @@
+rules:
+  - id: detect-eval
+    patterns:
+      - pattern: eval(...)
+    message: "Avoid using eval() — it can lead to code injection."
+    severity: ERROR
+    languages: [javascript]
+
+  - id: sql-injection
+    patterns:
+      - pattern: db.all(`$ANY`, ...)
+      - metavariable-regex:
+          metavariable: $ANY
+          regex: '.*\${.*}.*'  # detects string concatenation or interpolation
+    message: "Potential SQL Injection detected."
+    severity: ERROR
+    languages: [javascript]
+
+  - id: nodejs-sql-injection
+    patterns:
+      - pattern: db.all(`SELECT $COLUMNS FROM $TABLE$where`, ...)
+    message: "Dynamic SQL built from user input — potential SQL injection."
+    severity: ERROR
+    languages: [javascript]
+
+  - id: sql-injection-variable
+    patterns:
+      - pattern: db.all($SQL, ...)
+    message: "SQL query passed via variable — check for unsafe concatenation or template literals."
+    severity: WARNING
+    languages: [javascript]
