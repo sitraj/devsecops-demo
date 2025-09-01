@@ -12,15 +12,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Semgrep
-        uses: returntocorp/semgrep-action@v1
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          config: >-
-            p/default        # Use Semgrep's default security rules
-            .semgrep/
-          generateSarif: "1" # Generate SARIF for GitHub code scanning
+          python-version: '3.9'
+
+      - name: Install Semgrep
+        run: |
+          python -m pip install --upgrade pip
+          pip install semgrep
+
+      - name: Run Semgrep
+        run: |
+          mkdir -p .semgrep
+          semgrep --config p/default --config .semgrep/ --sarif --output .semgrep/semgrep.sarif
 
       - name: Upload SARIF to GitHub
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: semgrep.sarif
+          sarif_file: .semgrep/semgrep.sarif
