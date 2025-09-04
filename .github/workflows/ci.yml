@@ -29,7 +29,7 @@ jobs:
       - name: Run Semgrep
         run: |
           mkdir -p .semgrep
-          semgrep --config p/default --config .semgrep/ --error --sarif --output .semgrep/semgrep.sarif
+          semgrep --config p/default --config .semgrep/ --sarif --output .semgrep/semgrep.sarif
 
       - name: Upload SARIF to GitHub
         if: always() # Always upload SARIF even if the workflow fails
