@@ -1,4 +1,9 @@
-# name: Semgrep SAST Scan
+name: Semgrep SAST Scan
+
+on:
+  workflow_dispatch:  # only manual trigger
+
+jobs: {}
 
 # on:
 #   pull_request:
