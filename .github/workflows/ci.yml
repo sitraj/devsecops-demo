@@ -75,6 +75,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [security-scan, dependency-scan]   # 🔥 CHANGED: wait for scans
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
