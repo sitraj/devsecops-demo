@@ -20,13 +20,13 @@ jobs:
               uses: aquasecurity/tfsec-action@v1.0.3
               with:
                   working_directory: ./infra/terraform
-                  additional_args: --minimum-severity CRITICAL --format sarif --out tfsec.sarif
+                  additional_args: --minimum-severity CRITICAL --format sarif --out ../../tfsec.sarif
 
             - name: Upload tfsec report
               if: always()
               uses: github/codeql-action/upload-sarif@v3
               with:
-                  sarif_file: ./infra/terraform/tfsec.sarif
+                  sarif_file: tfsec.sarif
 
     checkov:
         runs-on: ubuntu-latest
@@ -40,13 +40,13 @@ jobs:
                   directory: ./infra/terraform
                   framework: terraform
                   output_format: sarif
-                  output_file_path: checkov.sarif
+                  output_file_path: ../../checkov.sarif
                   soft_fail: true
 
             - name: Upload Checkov report
               if: always()
               uses: github/codeql-action/upload-sarif@v3
               with:
-                  sarif_file: ./infra/terraform/checkov.sarif
+                  sarif_file: checkov.sarif
 
                 
