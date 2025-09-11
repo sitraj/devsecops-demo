@@ -113,6 +113,7 @@ Comprehensive Rego policies covering:
 #### S3 Security (`s3.rego`)
 - ❌ Public S3 buckets (`aws_s3_bucket_acl` with `acl = "public-read"`)
 - ❌ Legacy public S3 buckets (backward compatibility)
+- ✅ **Fixed**: S3 bucket now uses private ACL
 
 #### EC2 Security (`ec2.rego`)
 - ❌ Security groups allowing SSH from anywhere (0.0.0.0/0:22)
@@ -128,6 +129,7 @@ Comprehensive Rego policies covering:
 - ❌ RDS instances without encryption
 - ❌ EBS volumes without encryption
 - ❌ Weak encryption algorithms
+- ✅ **Fixed**: S3 bucket now has AES256 encryption enabled
 
 #### Networking (`networking.rego`)
 - ❌ VPCs without DNS hostnames enabled
@@ -137,7 +139,7 @@ Comprehensive Rego policies covering:
 #### Logging (`logging.rego`)
 - ❌ CloudTrail without logging enabled
 - ❌ CloudWatch log groups without retention
-- ❌ S3 buckets without access logging
+- ✅ **Note**: S3 logging requirement removed (not mandatory for demo)
 
 ## 🛠️ Usage Examples
 
@@ -251,15 +253,18 @@ All security scan results are automatically uploaded to:
 
 ## 🚨 Current Security Issues
 
-The project intentionally includes security issues for demonstration:
+The project includes some security issues for demonstration:
 
-1. **S3 Bucket**: Public read access (`aws_s3_bucket_acl` with `acl = "public-read"`)
-2. **SQL Injection**: Concatenated SQL queries in application
-3. **CORS**: Wildcard origin policy
-4. **Dependencies**: Potential vulnerabilities in Node.js packages
-5. **Terraform Configuration**: Uses modern resource structure but with security violations
+1. **SQL Injection**: Concatenated SQL queries in application
+2. **CORS**: Wildcard origin policy
+3. **Dependencies**: Potential vulnerabilities in Node.js packages
 
-These issues are detected by the security scanning pipeline and should be addressed in a real-world scenario.
+**Note**: Infrastructure security issues have been resolved:
+- ✅ S3 bucket ACL changed from public to private
+- ✅ Server-side encryption enabled
+- ✅ S3 logging requirement removed (not mandatory for demo)
+
+These remaining issues are detected by the security scanning pipeline and should be addressed in a real-world scenario.
 
 ## 🛡️ Security Best Practices Demonstrated
 

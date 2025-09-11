@@ -11,7 +11,7 @@ resource "aws_s3_bucket" "example" {
 
 resource "aws_s3_bucket_acl" "example" {
   bucket = aws_s3_bucket.example.id
-  acl    = "public-read"
+  acl    = "private"
   depends_on = [aws_s3_bucket_ownership_controls.example]
 }
 
@@ -21,6 +21,17 @@ resource "aws_s3_bucket_ownership_controls" "example" {
     object_ownership = "BucketOwnerPreferred"
   }
 }
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "example" {
+  bucket = aws_s3_bucket.example.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+# S3 logging removed - not required for this demo
 
 resource "aws_s3_bucket_public_access_block" "example" {
   bucket                  = aws_s3_bucket.example.id

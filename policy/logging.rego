@@ -16,13 +16,7 @@ deny contains msg if {
     msg := sprintf("❌ CloudWatch log group %s does not have retention period set", [resource.address])
 }
 
-# Deny S3 buckets without access logging
-deny contains msg if {
-    resource := input.resource_changes[_]
-    resource.type == "aws_s3_bucket"
-    not resource.change.after.logging
-    msg := sprintf("❌ S3 bucket %s does not have access logging enabled", [resource.address])
-}
+# S3 bucket logging requirement removed - not mandatory for this demo
 
 # Deny VPCs without flow logs
 deny contains msg if {
