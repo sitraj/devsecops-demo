@@ -7,6 +7,7 @@ data "aws_caller_identity" "current" {}
 
 resource "aws_s3_bucket" "example" {
   bucket = "devsecops-demo-bucket-${data.aws_caller_identity.current.account_id}"
+  acl    = "public-read"
 }
 
 resource "aws_s3_bucket_public_access_block" "example" {
