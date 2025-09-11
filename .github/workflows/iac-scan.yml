@@ -16,7 +16,7 @@ jobs:
               uses: aquasecurity/tfsec-action@v1.0.3
               with:
                   working_directory: ./infra/terraform
-                  additional_args: --severity CRITICAL --format sarif --out tfsec.sarif
+                  additional_args: --minimum-severity CRITICAL --format sarif --out tfsec.sarif
 
             - name: Upload tfsec report
               uses: github/codeql-action/upload-sarif@v3
