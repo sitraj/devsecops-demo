@@ -1,0 +1,45 @@
+name: IaC Security Scan
+
+on:
+    pull_request:
+    push:
+        branches: ["main"]
+
+jobs:
+    tfsec:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repo
+            uses: actions/checkout@4
+
+            - name: Run tfsec
+            uses: aquasecurity/tfsec-action@1
+            with:
+                working_directory: ./infra/terraform
+                additional_args: --severity CRITICAL --format sarif --out tfsec.sarif
+
+            - name: Upload tfsec report
+            uses: github/codeql-action/upload-sarif@3
+            with:
+                sarif_file: tfsec.sarif
+
+    checkov:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repo
+            uses: actions/checkout@4
+
+            - name: Run Checkov
+            uses: bridgecrewio/checkov-action@12
+            with:
+                directory: ./infra/terraform
+                framework: terraform
+                output_format: sarif
+                output_file_path: checkov.sarif
+                soft_fail: true
+
+            - name: Upload Checkov report
+            uses: github/codeql-action/upload-sarif@3
+            with:
+                sarif_file: checkov.sarif
+                
