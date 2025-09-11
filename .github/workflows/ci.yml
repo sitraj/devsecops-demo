@@ -142,7 +142,7 @@ jobs:
         run: terraform -chdir=infra/terraform show -json tfplan > tfplan.json
 
       - name: Run Conftest Policies
-        run: conftest test infra/terraform/tfplan.json -p policy/ --all-namespaces
+        run: conftest test tfplan.json -p policy/ --all-namespaces
 
 
   build-and-push:
