@@ -19,6 +19,7 @@ jobs:
                   additional_args: --minimum-severity CRITICAL --format sarif --out tfsec.sarif
 
             - name: Upload tfsec report
+              if: always()
               uses: github/codeql-action/upload-sarif@v3
               with:
                   sarif_file: tfsec.sarif
@@ -39,7 +40,9 @@ jobs:
                   soft_fail: true
 
             - name: Upload Checkov report
+              if: always()
               uses: github/codeql-action/upload-sarif@v3
               with:
-                  sarif_file: checkov.sarif
+                sarif_file: checkov.sarif
+
                 
