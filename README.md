@@ -6,11 +6,12 @@ A comprehensive DevSecOps demonstration project showcasing security scanning, in
 
 This project demonstrates a complete DevSecOps pipeline with:
 - **Application**: Node.js web service with SQLite database
-- **Infrastructure**: AWS S3 bucket with Terraform
+- **Infrastructure**: AWS S3 bucket with modern Terraform configuration
 - **Containerization**: Docker with multi-stage builds
 - **Orchestration**: Kubernetes deployment manifests
 - **Security Scanning**: Multiple security tools integrated
 - **Policy Enforcement**: Rego policies for infrastructure compliance
+- **CI/CD Integration**: Automated security validation with AWS credentials
 
 ## 📁 Project Structure
 
@@ -22,7 +23,7 @@ devsecops-demo/
 │   └── package-lock.json  # Locked dependencies
 ├── infra/                 # Infrastructure as Code
 │   └── terraform/         # Terraform configuration
-│       ├── main.tf        # AWS S3 bucket resources
+│       ├── main.tf        # AWS S3 bucket resources (modern structure)
 │       └── *.tfstate      # Terraform state files
 ├── k8s/                   # Kubernetes manifests
 │   ├── deployment.yaml    # Application deployment
@@ -50,6 +51,7 @@ devsecops-demo/
 - Terraform
 - Kubernetes (kind recommended)
 - Conftest (for policy testing)
+- AWS CLI (for local Terraform operations)
 
 ### Local Development
 
@@ -98,6 +100,7 @@ devsecops-demo/
 - **tfsec**: Terraform security scanner
 - **Checkov**: Infrastructure as Code security analysis
 - **Conftest**: Policy enforcement with Rego
+- **Automated Policy Validation**: CI/CD integration with Terraform plans
 
 ### 3. Container Security
 - **Trivy Image Scan**: Container vulnerability scanning
@@ -108,7 +111,8 @@ devsecops-demo/
 Comprehensive Rego policies covering:
 
 #### S3 Security (`s3.rego`)
-- ❌ Public S3 buckets (`acl = "public-read"`)
+- ❌ Public S3 buckets (`aws_s3_bucket_acl` with `acl = "public-read"`)
+- ❌ Legacy public S3 buckets (backward compatibility)
 
 #### EC2 Security (`ec2.rego`)
 - ❌ Security groups allowing SSH from anywhere (0.0.0.0/0:22)
@@ -186,6 +190,15 @@ terraform plan
 terraform apply
 ```
 
+**Note**: Ensure AWS credentials are configured locally:
+```bash
+aws configure
+# or set environment variables:
+export AWS_ACCESS_KEY_ID=your_access_key
+export AWS_SECRET_ACCESS_KEY=your_secret_key
+export AWS_DEFAULT_REGION=us-east-1
+```
+
 ## 🔄 CI/CD Pipeline
 
 The GitHub Actions workflow (`.github/workflows/ci.yml`) includes:
@@ -204,14 +217,23 @@ The GitHub Actions workflow (`.github/workflows/ci.yml`) includes:
    - Checkov IaC security scanning
    - SARIF report upload
 
-4. **Container Security**
+4. **Policy Enforcement**
+   - Conftest policy validation against Terraform plan
+   - Custom Rego policies for infrastructure compliance
+   - Terraform plan generation and JSON conversion
+   - AWS credentials configuration for plan generation
+   - Policy validation before infrastructure deployment
+
+5. **Container Security**
    - Trivy image vulnerability scan
    - Pre-push security validation
 
 ### Build & Deploy
-- Docker image build and push to GHCR
-- Security gates prevent deployment of vulnerable images
-- Automated deployment to container registry
+- **Security Gates**: All security scans must pass before build
+- **Docker Image**: Build and push to GHCR only after policy validation
+- **Container Registry**: Automated deployment with security validation
+- **Dependencies**: Waits for code scan, dependency scan, infrastructure scan, and policy enforcement
+- **AWS Integration**: Terraform plans generated with proper AWS credentials
 
 ## 🐳 Container Registry
 
@@ -231,10 +253,11 @@ All security scan results are automatically uploaded to:
 
 The project intentionally includes security issues for demonstration:
 
-1. **S3 Bucket**: Public read access (`acl = "public-read"`)
+1. **S3 Bucket**: Public read access (`aws_s3_bucket_acl` with `acl = "public-read"`)
 2. **SQL Injection**: Concatenated SQL queries in application
 3. **CORS**: Wildcard origin policy
 4. **Dependencies**: Potential vulnerabilities in Node.js packages
+5. **Terraform Configuration**: Uses modern resource structure but with security violations
 
 These issues are detected by the security scanning pipeline and should be addressed in a real-world scenario.
 
@@ -242,10 +265,14 @@ These issues are detected by the security scanning pipeline and should be addres
 
 - **Shift Left Security**: Security scanning in CI/CD pipeline
 - **Policy as Code**: Infrastructure compliance with Rego
+- **Automated Policy Enforcement**: Conftest validation in CI/CD
 - **Container Security**: Image vulnerability scanning
 - **Dependency Management**: Automated vulnerability detection
 - **Infrastructure Scanning**: IaC security analysis
+- **Security Gates**: Build prevention on policy violations
 - **SARIF Integration**: Standardized security reporting
+- **Modern Terraform**: Updated to use current AWS provider best practices
+- **Credential Management**: Secure AWS credential handling in CI/CD
 
 ## 🔧 Development
 
@@ -262,6 +289,24 @@ These issues are detected by the security scanning pipeline and should be addres
 2. Configure appropriate security tool
 3. Upload SARIF reports to GitHub Security tab
 4. Add security gates to build process
+5. Update `build-and-push` job dependencies if needed
+
+### Policy Enforcement in CI/CD
+
+The `iac-policy` job automatically:
+1. Sets up Terraform and Conftest
+2. Configures AWS credentials for plan generation
+3. Generates Terraform plan with proper AWS authentication
+4. Converts plan to JSON format
+5. Runs all Rego policies against the plan
+6. Fails the pipeline if policies are violated
+
+### Required GitHub Secrets
+
+For the CI/CD pipeline to work properly, add these secrets to your GitHub repository:
+- `AWS_ACCESS_KEY_ID`: Your AWS access key ID
+- `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key
+- `GHCR_PAT`: GitHub Container Registry personal access token
 
 ## 📝 License
 
