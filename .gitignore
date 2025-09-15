@@ -5,3 +5,4 @@ infra/terraform/tfplan.state
 infra/terraform/plan.tfplan
 infra/terraform/tfplan
 infra/terraform/tfplan.json
+cosign.key
