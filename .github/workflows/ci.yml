@@ -197,7 +197,7 @@ jobs:
       - name: Sign Docker image
         run: |
          echo "${{ secrets.COSIGN_KEY }}" > cosign.key
-         cosign sign --key cosign.key ghcr.io/${{ github.repository_owner }}/devsecops-demo:latest
+         cosign sign --key cosign.key --yes ghcr.io/${{ github.repository_owner }}/devsecops-demo:latest
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
