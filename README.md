@@ -39,6 +39,7 @@ devsecops-demo/
 ├── .github/workflows/     # CI/CD pipelines
 │   └── ci.yml            # Main security & build pipeline
 ├── Dockerfile            # Container definition
+├── cosign.pub           # Cosign public key for image verification
 └── .gitignore           # Git ignore rules
 ```
 
@@ -52,6 +53,7 @@ devsecops-demo/
 - Kubernetes (kind recommended)
 - Conftest (for policy testing)
 - AWS CLI (for local Terraform operations)
+- Cosign (for container image signing and verification)
 
 ### Local Development
 
@@ -106,6 +108,8 @@ devsecops-demo/
 - **Trivy Image Scan**: Container vulnerability scanning
 - **Multi-stage Docker builds**: Optimized container images
 - **Non-root user**: Security best practices
+- **Image Signing**: Cosign-based container image signing and verification
+- **Supply Chain Security**: Cryptographic verification of container images
 
 ### 4. Policy Enforcement
 Comprehensive Rego policies covering:
@@ -236,6 +240,8 @@ The GitHub Actions workflow (`.github/workflows/ci.yml`) includes:
 - **Container Registry**: Automated deployment with security validation
 - **Dependencies**: Waits for code scan, dependency scan, infrastructure scan, and policy enforcement
 - **AWS Integration**: Terraform plans generated with proper AWS credentials
+- **Image Signing**: Automatic signing of container images with Cosign
+- **Pre-push Scanning**: Local image vulnerability scan before registry push
 
 ## 🐳 Container Registry
 
@@ -243,6 +249,20 @@ Images are automatically built and pushed to GitHub Container Registry:
 - **Registry**: `ghcr.io/sitraj/devsecops-demo`
 - **Tag**: `latest`
 - **Security**: Pre-scan validation required
+- **Signing**: Images are cryptographically signed with Cosign
+- **Verification**: Use `cosign.pub` public key to verify image signatures
+
+### Image Verification
+
+Verify the integrity and authenticity of container images:
+
+```bash
+# Verify image signature
+cosign verify --key cosign.pub ghcr.io/sitraj/devsecops-demo:latest
+
+# Pull and verify in one command
+cosign pull --key cosign.pub ghcr.io/sitraj/devsecops-demo:latest
+```
 
 ## 📊 Security Dashboard
 
@@ -278,6 +298,8 @@ These remaining issues are detected by the security scanning pipeline and should
 - **SARIF Integration**: Standardized security reporting
 - **Modern Terraform**: Updated to use current AWS provider best practices
 - **Credential Management**: Secure AWS credential handling in CI/CD
+- **Container Signing**: Cryptographic verification of container images
+- **Supply Chain Security**: End-to-end security from code to container
 
 ## 🔧 Development
 
@@ -312,6 +334,8 @@ For the CI/CD pipeline to work properly, add these secrets to your GitHub reposi
 - `AWS_ACCESS_KEY_ID`: Your AWS access key ID
 - `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key
 - `GHCR_PAT`: GitHub Container Registry personal access token
+- `COSIGN_KEY`: Cosign private key for image signing (PEM format)
+- `COSIGN_PASSWORD`: Password for the Cosign private key
 
 ## 📝 License
 
