@@ -195,15 +195,15 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/devsecops-demo:latest
 
-      - name: Sign Docker image
-        run: |
-           echo "${{ secrets.COSIGN_KEY }}" > cosign.key
-           cosign sign --key cosign.key --yes ghcr.io/${{ github.repository_owner }}/devsecops-demo:latest
-        env:
-            COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-
       - name: Install Cosign
         run: |
           wget https://github.com/sigstore/cosign/releases/download/v2.4.1/cosign-linux-amd64
           chmod +x cosign-linux-amd64
           sudo mv cosign-linux-amd64 /usr/local/bin/cosign
+
+      - name: Sign Docker image
+        run: |
+          echo "${{ secrets.COSIGN_KEY }}" > cosign.key
+          cosign sign --key cosign.key --yes ghcr.io/${{ github.repository_owner }}/devsecops-demo:latest
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
