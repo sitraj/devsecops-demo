@@ -196,7 +196,7 @@ jobs:
 
       - name: Sign Docker image
         run: |
-         echo "${{ secrets.COSIGN_PRIVATE_KEY}}" > cosign.key
+         echo "${{ secrets.COSIGN_KEY }}" > cosign.key
          cosign sign --key cosign.key ghcr.io/${{ github.repository_owner }}/devsecops-demo:latest
 
         # 🔥 CHANGED: now push after scan passes
