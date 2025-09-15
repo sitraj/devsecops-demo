@@ -194,16 +194,16 @@ jobs:
           chmod +x cosign-linux-amd64
           sudo mv cosign-linux-amd64 /usr/local/bin/cosign
 
-      - name: Sign Docker image
-        run: |
-         echo "${{ secrets.COSIGN_KEY }}" > cosign.key
-         cosign sign --key cosign.key --yes ghcr.io/${{ github.repository_owner }}/devsecops-demo:latest
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-
         # 🔥 CHANGED: now push after scan passes
       - name: Push Docker image to GHCR
         uses: docker/build-push-action@v4
         with:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/devsecops-demo:latest
+
+      - name: Sign Docker image
+        run: |
+           echo "${{ secrets.COSIGN_KEY }}" > cosign.key
+           cosign sign --key cosign.key --yes ghcr.io/${{ github.repository_owner }}/devsecops-demo:latest
+        env:
+            COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
